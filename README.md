@@ -2,6 +2,9 @@
 Compilador para a linguagem Jack - Curso de Engenharia da Computação.
 Este repositório contém o desenvolvimento de um compilador para a linguagem **Jack**, como parte das atividades da disciplina de Compiladores do curso de **Engenharia da Computação**.
 
+## 👥 Equipe
+* **Nome do Integrante:** Guilherme Pessoa Lima Diniz
+
 
 ## ⚙️ Configuração do Ambiente
 * **Linguagem de Programação utilizada:** Python 3.14.0
