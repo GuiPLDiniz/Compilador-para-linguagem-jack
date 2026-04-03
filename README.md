@@ -20,5 +20,14 @@ O analisador será responsável por:
 - `src/`: código fonte
 - `tests/`: arquivos de teste
 
+## Estado atual
+O projeto já realiza:
+- leitura de arquivos `.jack`
+- geração de arquivo XML de saída
+- tokenização inicial de símbolos e palavras simples
+
+## Saída
+Para cada arquivo `.jack`, o programa gera automaticamente um arquivo `.xml` correspondente com a estrutura inicial de tokens.
+
 ## Observações
 O projeto será desenvolvido sem o uso de geradores automáticos de analisadores léxicos e sintáticos (Lex, Flex, Yacc), conforme exigência da disciplina.
