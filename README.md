@@ -1,12 +1,24 @@
-# Compilador-para-linguagem-jack
-Compilador para a linguagem Jack - Curso de Engenharia da Computação.
-Este repositório contém o desenvolvimento de um compilador para a linguagem **Jack**, como parte das atividades da disciplina de Compiladores do curso de **Engenharia da Computação**.
+# Compilador para a Linguagem Jack
 
-## 👥 Equipe
-* **Nome do Integrante:** Guilherme Pessoa Lima Diniz
+Este repositório contém o desenvolvimento de um compilador para a linguagem **Jack**, como parte da disciplina de Compiladores do curso de Engenharia da Computação.
 
+## Integrantes
+- Guilherme Pessoa Lima Diniz
 
-## ⚙️ Configuração do Ambiente
-* **Linguagem de Programação utilizada:** Python 3.14.0
-* **Gerenciador de Versão:** Git
-* **Editor/IDE:** Visual Studio Code
+## Linguagem utilizada
+- Python 3
+
+## Descrição
+Este projeto tem como objetivo a implementação de um analisador léxico (scanner) para a linguagem Jack, conforme especificações do curso nand2tetris.
+
+O analisador será responsável por:
+- ler arquivos `.jack`
+- identificar os tokens da linguagem
+- gerar saída em formato XML compatível com o padrão oficial
+
+## Estrutura do projeto
+- `src/`: código fonte
+- `tests/`: arquivos de teste
+
+## Observações
+O projeto será desenvolvido sem o uso de geradores automáticos de analisadores léxicos e sintáticos (Lex, Flex, Yacc), conforme exigência da disciplina.
