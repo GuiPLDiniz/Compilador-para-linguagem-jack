@@ -29,7 +29,21 @@ def main():
 
     # Exibe o conteúdo lido
     print("Arquivo lido com sucesso.\n")
-    print(content)
+    
+    # Define o nome do arquivo de saída
+    output_path = file_path.with_name(file_path.stem + "T.xml")
+
+    # Conteúdo inicial do XML (ainda sem tokens reais)
+    xml_content = "<tokens>\n</tokens>"
+
+    try:
+        output_path.write_text(xml_content, encoding="utf-8")
+    except Exception as e:
+        print(f"Erro ao escrever o arquivo XML: {e}")
+        sys.exit(1)
+
+    print(f"Arquivo XML gerado: {output_path}")
+
 
 
 if __name__ == "__main__":
