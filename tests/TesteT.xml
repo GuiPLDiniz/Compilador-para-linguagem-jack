@@ -1,2 +1,15 @@
 <tokens>
+<token> class </token>
+<token> Main </token>
+<symbol> { </symbol>
+<token> function </token>
+<token> void </token>
+<token> main </token>
+<symbol> ( </symbol>
+<symbol> ) </symbol>
+<symbol> { </symbol>
+<token> return </token>
+<symbol> ; </symbol>
+<symbol> } </symbol>
+<symbol> } </symbol>
 </tokens>
