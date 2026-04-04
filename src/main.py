@@ -115,7 +115,7 @@ def tokens_to_xml(tokens):
         lines.append(f"<{token_type}> {escaped_value} </{token_type}>")
 
     lines.append("</tokens>")
-    return "\n".join(lines)
+    return "\n".join(lines) + "\n"
 
 
 def main():
