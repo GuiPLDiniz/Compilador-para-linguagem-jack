@@ -12,4 +12,16 @@
 <symbol> ; </symbol>
 <symbol> } </symbol>
 <symbol> } </symbol>
+<identifier> palavra </identifier>
+<symbol> = </symbol>
+<stringConstant> isso é uma string </stringConstant>
+<identifier> inteiro </identifier>
+<symbol> = </symbol>
+<integerConstant> 1 </integerConstant>
+<identifier> inteiro2 </identifier>
+<symbol> = </symbol>
+<integerConstant> 2 </integerConstant>
+<identifier> palavra2 </identifier>
+<symbol> = </symbol>
+<stringConstant> isso é outra string </stringConstant>
 </tokens>

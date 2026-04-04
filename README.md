@@ -26,8 +26,14 @@ O projeto já realiza:
 - geração de saída XML
 - tokenização inicial
 - classificação de palavras reservadas (`keyword`) e identificadores (`identifier`)
+- Identificação de símbolos da linguagem
+- Reconhecimento de: `integerConstant` e `stringConstant`
 
-Ainda não há tratamento completo de comentários, constantes inteiras e strings.
+## Limitações Atuais
+
+- Ainda não há tratamento de comentários (`//`, `/* */`, `/** */`)
+- Não há escape de caracteres especiais para XML (`<`, `>`, `&`)
+- A validação sintática não é realizada (apenas análise léxica)
 
 ## Saída
 Para cada arquivo `.jack`, o programa gera automaticamente um arquivo `.xml` correspondente com a estrutura inicial de tokens.

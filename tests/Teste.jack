@@ -3,3 +3,8 @@ class Main {
         return;
     }
 }
+
+palavra = "isso é uma string"
+inteiro = 1
+inteiro2 = 2
+palavra2 = "isso é outra string"

@@ -14,6 +14,8 @@ SYMBOLS = set("{}()[].,;+-*/&|<>=~")
 def classify_token(token):
     if token in KEYWORDS:
         return "keyword"
+    elif token.isdigit():
+        return "integerConstant"
     else:
         return "identifier"
 
@@ -21,29 +23,48 @@ def classify_token(token):
 def basic_tokenize(content):
     tokens = []
     current = ""
+    i = 0
+    n = len(content)
 
-    for char in content:
-        # Se encontrar espaço em branco, fecha o token atual
+    while i < n:
+        char = content[i]
+
+        # STRING CONSTANT
+        if char == '"':
+            i += 1
+            string_value = ""
+
+            while i < n and content[i] != '"':
+                string_value += content[i]
+                i += 1
+
+            tokens.append(("stringConstant", string_value))
+            i += 1
+            continue
+
+        # ESPAÇO
         if char.isspace():
             if current:
                 token_type = classify_token(current)
                 tokens.append((token_type, current))
                 current = ""
+            i += 1
             continue
 
-        # Se encontrar símbolo, fecha o token atual e adiciona o símbolo
+        # SÍMBOLO
         if char in SYMBOLS:
             if current:
                 token_type = classify_token(current)
-                tokens.append((token_type, current))                
+                tokens.append((token_type, current))
                 current = ""
             tokens.append(("symbol", char))
+            i += 1
             continue
 
-        # Caso contrário, continua formando a palavra
+        # CONTINUA PALAVRA
         current += char
+        i += 1
 
-    # Adiciona o último token, se existir
     if current:
         token_type = classify_token(current)
         tokens.append((token_type, current))

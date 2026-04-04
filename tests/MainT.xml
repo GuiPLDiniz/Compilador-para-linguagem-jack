@@ -16,11 +16,7 @@
 <identifier> and </identifier>
 <identifier> the </identifier>
 <identifier> book </identifier>
-<identifier> "The </identifier>
-<identifier> Elements </identifier>
-<identifier> of </identifier>
-<identifier> Computing </identifier>
-<identifier> Systems" </identifier>
+<stringConstant> The Elements of Computing Systems </stringConstant>
 <symbol> / </symbol>
 <symbol> / </symbol>
 <identifier> by </identifier>
@@ -37,7 +33,7 @@
 <identifier> name: </identifier>
 <identifier> projects </identifier>
 <symbol> / </symbol>
-<identifier> 10 </identifier>
+<integerConstant> 10 </integerConstant>
 <symbol> / </symbol>
 <identifier> ArrayTest </identifier>
 <symbol> / </symbol>
@@ -51,7 +47,7 @@
 <identifier> as </identifier>
 <identifier> projects </identifier>
 <symbol> / </symbol>
-<identifier> 9 </identifier>
+<integerConstant> 9 </integerConstant>
 <symbol> / </symbol>
 <identifier> Average </identifier>
 <symbol> / </symbol>
@@ -103,10 +99,7 @@
 <symbol> . </symbol>
 <identifier> readInt </identifier>
 <symbol> ( </symbol>
-<identifier> "HOW </identifier>
-<identifier> MANY </identifier>
-<identifier> NUMBERS? </identifier>
-<identifier> " </identifier>
+<stringConstant> HOW MANY NUMBERS?  </stringConstant>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 <keyword> let </keyword>
@@ -122,7 +115,7 @@
 <keyword> let </keyword>
 <identifier> i </identifier>
 <symbol> = </symbol>
-<identifier> 0 </identifier>
+<integerConstant> 0 </integerConstant>
 <symbol> ; </symbol>
 <keyword> while </keyword>
 <symbol> ( </symbol>
@@ -141,11 +134,7 @@
 <symbol> . </symbol>
 <identifier> readInt </identifier>
 <symbol> ( </symbol>
-<identifier> "ENTER </identifier>
-<identifier> THE </identifier>
-<identifier> NEXT </identifier>
-<identifier> NUMBER: </identifier>
-<identifier> " </identifier>
+<stringConstant> ENTER THE NEXT NUMBER:  </stringConstant>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 <keyword> let </keyword>
@@ -153,18 +142,18 @@
 <symbol> = </symbol>
 <identifier> i </identifier>
 <symbol> + </symbol>
-<identifier> 1 </identifier>
+<integerConstant> 1 </integerConstant>
 <symbol> ; </symbol>
 <symbol> } </symbol>
 <keyword> let </keyword>
 <identifier> i </identifier>
 <symbol> = </symbol>
-<identifier> 0 </identifier>
+<integerConstant> 0 </integerConstant>
 <symbol> ; </symbol>
 <keyword> let </keyword>
 <identifier> sum </identifier>
 <symbol> = </symbol>
-<identifier> 0 </identifier>
+<integerConstant> 0 </integerConstant>
 <symbol> ; </symbol>
 <keyword> while </keyword>
 <symbol> ( </symbol>
@@ -188,7 +177,7 @@
 <symbol> = </symbol>
 <identifier> i </identifier>
 <symbol> + </symbol>
-<identifier> 1 </identifier>
+<integerConstant> 1 </integerConstant>
 <symbol> ; </symbol>
 <symbol> } </symbol>
 <keyword> do </keyword>
@@ -196,10 +185,7 @@
 <symbol> . </symbol>
 <identifier> printString </identifier>
 <symbol> ( </symbol>
-<identifier> "THE </identifier>
-<identifier> AVERAGE </identifier>
-<identifier> IS: </identifier>
-<identifier> " </identifier>
+<stringConstant> THE AVERAGE IS:  </stringConstant>
 <symbol> ) </symbol>
 <symbol> ; </symbol>
 <keyword> do </keyword>
