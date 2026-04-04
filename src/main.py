@@ -96,12 +96,23 @@ def basic_tokenize(content):
 
     return tokens
 
+#funcao para aplicar o escape de caracteres
+def escape_xml(value):
+    if value == "<":
+        return "&lt;"
+    elif value == ">":
+        return "&gt;"
+    elif value == "&":
+        return "&amp;"
+    else:
+        return value
 
 def tokens_to_xml(tokens):
     lines = ["<tokens>"]
 
     for token_type, value in tokens:
-        lines.append(f"<{token_type}> {value} </{token_type}>")
+        escaped_value = escape_xml(value)
+        lines.append(f"<{token_type}> {escaped_value} </{token_type}>")
 
     lines.append("</tokens>")
     return "\n".join(lines)
