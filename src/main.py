@@ -1,7 +1,21 @@
 import sys
 from pathlib import Path
 
+
+KEYWORDS = {
+    "class", "constructor", "function", "method",
+    "field", "static", "var",
+    "int", "char", "boolean", "void",
+    "true", "false", "null", "this",
+    "let", "do", "if", "else", "while", "return"
+}
 SYMBOLS = set("{}()[].,;+-*/&|<>=~")
+
+def classify_token(token):
+    if token in KEYWORDS:
+        return "keyword"
+    else:
+        return "identifier"
 
 
 def basic_tokenize(content):
@@ -12,24 +26,27 @@ def basic_tokenize(content):
         # Se encontrar espaço em branco, fecha o token atual
         if char.isspace():
             if current:
-                tokens.append(("token", current))
+                token_type = classify_token(current)
+                tokens.append((token_type, current))
                 current = ""
             continue
 
         # Se encontrar símbolo, fecha o token atual e adiciona o símbolo
         if char in SYMBOLS:
             if current:
-                tokens.append(("token", current))
+                token_type = classify_token(current)
+                tokens.append((token_type, current))                
                 current = ""
             tokens.append(("symbol", char))
             continue
 
-        # Caso contrário, continua formando o token
+        # Caso contrário, continua formando a palavra
         current += char
 
     # Adiciona o último token, se existir
     if current:
-        tokens.append(("token", current))
+        token_type = classify_token(current)
+        tokens.append((token_type, current))
 
     return tokens
 

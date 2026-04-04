@@ -23,8 +23,11 @@ O analisador será responsável por:
 ## Estado atual
 O projeto já realiza:
 - leitura de arquivos `.jack`
-- geração de arquivo XML de saída
-- tokenização inicial de símbolos e palavras simples
+- geração de saída XML
+- tokenização inicial
+- classificação de palavras reservadas (`keyword`) e identificadores (`identifier`)
+
+Ainda não há tratamento completo de comentários, constantes inteiras e strings.
 
 ## Saída
 Para cada arquivo `.jack`, o programa gera automaticamente um arquivo `.xml` correspondente com a estrutura inicial de tokens.

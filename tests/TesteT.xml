@@ -1,14 +1,14 @@
 <tokens>
-<token> class </token>
-<token> Main </token>
+<keyword> class </keyword>
+<identifier> Main </identifier>
 <symbol> { </symbol>
-<token> function </token>
-<token> void </token>
-<token> main </token>
+<keyword> function </keyword>
+<keyword> void </keyword>
+<identifier> main </identifier>
 <symbol> ( </symbol>
 <symbol> ) </symbol>
 <symbol> { </symbol>
-<token> return </token>
+<keyword> return </keyword>
 <symbol> ; </symbol>
 <symbol> } </symbol>
 <symbol> } </symbol>
