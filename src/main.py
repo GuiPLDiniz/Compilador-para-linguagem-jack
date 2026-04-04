@@ -104,6 +104,8 @@ def escape_xml(value):
         return "&gt;"
     elif value == "&":
         return "&amp;"
+    elif value == '"':
+        return "&quot;"
     else:
         return value
 
