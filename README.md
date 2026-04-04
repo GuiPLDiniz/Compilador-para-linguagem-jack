@@ -28,10 +28,10 @@ O projeto já realiza:
 - classificação de palavras reservadas (`keyword`) e identificadores (`identifier`)
 - Identificação de símbolos da linguagem
 - Reconhecimento de: `integerConstant` e `stringConstant`
+- tratamento de comentários (`//`, `/* */`, `/** */`)
 
 ## Limitações Atuais
 
-- Ainda não há tratamento de comentários (`//`, `/* */`, `/** */`)
 - Não há escape de caracteres especiais para XML (`<`, `>`, `&`)
 - A validação sintática não é realizada (apenas análise léxica)
 

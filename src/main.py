@@ -11,6 +11,31 @@ KEYWORDS = {
 }
 SYMBOLS = set("{}()[].,;+-*/&|<>=~")
 
+def remove_comments(content):
+    i = 0
+    n = len(content)
+    result = ""
+
+    while i < n:
+        # comentário de linha //
+        if content[i:i+2] == "//":
+            i += 2
+            while i < n and content[i] != "\n":
+                i += 1
+
+        # comentário de bloco /* */
+        elif content[i:i+2] == "/*":
+            i += 2
+            while i < n-1 and content[i:i+2] != "*/":
+                i += 1
+            i += 2  # pula o */
+
+        else:
+            result += content[i]
+            i += 1
+
+    return result
+
 def classify_token(token):
     if token in KEYWORDS:
         return "keyword"
@@ -99,6 +124,7 @@ def main():
 
     try:
         content = file_path.read_text(encoding="utf-8")
+        content = remove_comments(content)
     except Exception as e:
         print(f"Erro ao ler o arquivo: {e}")
         sys.exit(1)
