@@ -81,7 +81,7 @@ O projeto já realiza:
 - identificação de símbolos da linguagem
 - reconhecimento de: `integerConstant` e `stringConstant`
 - tratamento de comentários (`//`, `/* */`, `/** */`)
-- escape de caracteres especiais para XML (`<`, `>`, `&`)
+- escape de caracteres especiais para XML (`<`, `>`, `&`, `"`)
 
 ## Limitações Atuais
 
