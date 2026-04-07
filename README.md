@@ -17,9 +17,61 @@ O analisador será responsável por:
 - gerar saída em formato XML compatível com o padrão oficial
 
 ## Estrutura do projeto
-- `src/`: código fonte
-- `tests/`: arquivos de teste
+O projeto está organizado de forma a separar claramente o código-fonte e os arquivos de teste, incluindo os arquivos oficiais do nand2tetris utilizados para validação.
+```
+Compilador-para-linguagem-jack/
+│
+├── src/
+│   ├── main.py
+│   └── test_utils.py
+│
+├── tests/
+│   ├── ArrayTest/
+│   │   ├── Main.jack
+│   │   ├── MainT.xml
+│   │   └── MainT_oficial.xml
+│   │
+│   ├── ExpressionLessSquare/
+│   │   ├── Main.jack
+│   │   ├── Square.jack
+│   │   ├── SquareGame.jack
+│   │   ├── MainT.xml
+│   │   ├── MainT_oficial.xml
+│   │   ├── SquareT.xml
+│   │   ├── SquareT_oficial.xml
+│   │   ├── SquareGameT.xml
+│   │   └── SquareGameT_oficial.xml
+│   │
+│   └── Square/
+│       ├── Main.jack
+│       ├── Square.jack
+│       ├── SquareGame.jack
+│       ├── MainT.xml
+│       ├── MainT_oficial.xml
+│       ├── SquareT.xml
+│       ├── SquareT_oficial.xml
+│       ├── SquareGameT.xml
+│       └── SquareGameT_oficial.xml
+│
+└── README.md
+```
+### Organização dos testes
+Os testes foram organizados em pastas correspondentes aos conjuntos oficiais do Projeto 10 do nand2tetris:
 
+- `ArrayTest`
+- `ExpressionLessSquare`
+- `Square`
+
+Cada pasta contém:
+
+- Arquivos `.jack`: código-fonte de entrada
+- Arquivos `.xml` (sem sufixo): saída gerada pelo analisador léxico
+- Arquivos `.xml` com sufixo _oficial: saída oficial fornecida pelo nand2tetris
+### Observação importante
+
+Os arquivos com sufixo `_oficial` representam o gabarito oficial e são utilizados para validação do funcionamento do analisador léxico.
+
+Já os arquivos `.xml` sem o sufixo `_oficial` são aqueles gerados pelo programa desenvolvido, devendo ser idênticos aos oficiais para que a implementação seja considerada correta.
 ## Estado atual
 O projeto já realiza:
 - leitura de arquivos `.jack`
