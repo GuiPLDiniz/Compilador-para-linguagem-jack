@@ -111,7 +111,7 @@ Apesar de estar concentrado em um único arquivo, o código está organizado log
     → função responsável: `classify_token()`
 - tokenização do conteúdo, com tratamento de `stringConstant`, símbolos, espaços e palavras
     → função responsável: `basic_tokenize()`
-- escape de caracteres especiais exigidos pelo XML (`<`, `>`, `&`, **"**)
+- escape de caracteres especiais exigidos pelo XML (`<`, `>`, `&`, ")
     → função responsável: `escape_xml()`
 - geração da saída final no formato XML
     → função responsável: `tokens_to_xml()`
