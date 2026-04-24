@@ -77,8 +77,8 @@ class Parser:
         while self.match("keyword", "constructor") or \
             self.match("keyword", "function") or \
             self.match("keyword", "method"):
-            # ainda não implementado
-            self.advance()  # temporário
+            
+            self.compile_subroutine_dec()
 
         self.consume("symbol", "}")
 
@@ -106,3 +106,48 @@ class Parser:
             self.consume("identifier")
         else:
             raise SyntaxError(f"Tipo inválido encontrado: {self.current_token()}")
+        
+    def compile_subroutine_dec(self):
+        self.open_tag("subroutineDec")
+
+        # constructor | function | method
+        self.consume("keyword")
+
+        # void | type
+        if self.match("keyword", "void"):
+            self.consume("keyword", "void")
+        else:
+            self.compile_type()
+
+        # nome da subrotina
+        self.consume("identifier")
+
+        self.consume("symbol", "(")
+        self.compile_parameter_list()
+        self.consume("symbol", ")")
+
+        self.compile_subroutine_body()
+
+        self.close_tag("subroutineDec")
+    
+    def compile_parameter_list(self):
+        self.open_tag("parameterList")
+        # vazio por enquanto
+        self.close_tag("parameterList")
+    
+    def compile_subroutine_body(self):
+        self.open_tag("subroutineBody")
+
+        self.consume("symbol", "{")
+
+        # varDec* (ignorado por enquanto)
+        while self.match("keyword", "var"):
+            self.advance()  # temporário
+
+        # statements (ignorado por enquanto)
+        while not self.match("symbol", "}"):
+            self.advance()  # temporário
+
+        self.consume("symbol", "}")
+
+        self.close_tag("subroutineBody")
