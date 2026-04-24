@@ -49,7 +49,6 @@ Os testes foram organizados em pastas correspondentes aos conjuntos oficiais do 
 - `ExpressionLessSquare`
 - `Square`
 
-Cada pasta contém:
 
 Cada pasta contém:
 
@@ -186,6 +185,18 @@ Essa abordagem:
 | Integração | OK |
 | Validação oficial | OK |
 | Testes automatizados | OK |
+
+## Relato da atividade
+
+Durante o desenvolvimento, os principais desafios foram:
+
+- compreender e implementar corretamente a gramática da linguagem Jack
+- estruturar o parser utilizando recursive descent parsing
+- tratar corretamente expressões e chamadas de subrotinas
+- garantir que a saída XML estivesse exatamente no formato esperado
+- lidar com diferenças de indentação na comparação dos arquivos
+
+A utilização de testes automatizados com normalização de XML foi fundamental para validar o funcionamento do parser e evitar erros sutis na estrutura da saída.
 
 ## Conclusão
 
