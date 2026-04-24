@@ -192,8 +192,8 @@ class Parser:
                 self.compile_do()
             elif self.match("keyword", "return"):
                 self.compile_return()
-            else:
-                self.advance()  # if ainda não implementado
+            elif self.match("keyword", "if"):
+                self.compile_if()
 
         self.close_tag("statements")
     
@@ -266,3 +266,28 @@ class Parser:
         self.consume("symbol", "}")
 
         self.close_tag("whileStatement")
+
+    def compile_if(self):
+        self.open_tag("ifStatement")
+
+        self.consume("keyword", "if")
+        self.consume("symbol", "(")
+
+        # expressão simplificada, será substituída depois por compile_expression()
+        while not self.match("symbol", ")"):
+            self.advance()
+
+        self.consume("symbol", ")")
+        self.consume("symbol", "{")
+
+        self.compile_statements()
+
+        self.consume("symbol", "}")
+
+        if self.match("keyword", "else"):
+            self.consume("keyword", "else")
+            self.consume("symbol", "{")
+            self.compile_statements()
+            self.consume("symbol", "}")
+
+        self.close_tag("ifStatement")
