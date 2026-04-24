@@ -71,8 +71,7 @@ class Parser:
 
         # classVarDec*
         while self.match("keyword", "static") or self.match("keyword", "field"):
-            # ainda não implementado
-            self.advance()  # temporário (será substituído depois)
+            self.compile_class_var_dec()
 
         # subroutineDec*
         while self.match("keyword", "constructor") or \
@@ -84,3 +83,26 @@ class Parser:
         self.consume("symbol", "}")
 
         self.close_tag("class")
+
+    def compile_class_var_dec(self):
+        self.open_tag("classVarDec")
+
+        self.consume("keyword")  # static | field
+        self.compile_type()
+        self.consume("identifier")  # varName
+
+        while self.match("symbol", ","):
+            self.consume("symbol", ",")
+            self.consume("identifier")  # varName
+
+        self.consume("symbol", ";")
+
+        self.close_tag("classVarDec")
+
+    def compile_type(self):
+        if self.match("keyword", "int") or self.match("keyword", "char") or self.match("keyword", "boolean"):
+            self.consume("keyword")
+        elif self.match("identifier"):
+            self.consume("identifier")
+        else:
+            raise SyntaxError(f"Tipo inválido encontrado: {self.current_token()}")
