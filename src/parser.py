@@ -153,9 +153,7 @@ class Parser:
         while self.match("keyword", "var"):
             self.compile_var_dec()
 
-        # statements (ignorado por enquanto)
-        while not self.match("symbol", "}"):
-            self.advance()  # temporário
+        self.compile_statements()
 
         self.consume("symbol", "}")
 
@@ -175,4 +173,33 @@ class Parser:
         self.consume("symbol", ";")
 
         self.close_tag("varDec")
-        
+    
+    def compile_statements(self):
+        self.open_tag("statements")
+
+        while (
+            self.match("keyword", "let") or
+            self.match("keyword", "if") or
+            self.match("keyword", "while") or
+            self.match("keyword", "do") or
+            self.match("keyword", "return")
+        ):
+            if self.match("keyword", "return"):
+                self.compile_return()
+            else:
+                self.advance()  # temporário para os outros
+
+        self.close_tag("statements")
+    
+    def compile_return(self):
+        self.open_tag("returnStatement")
+
+        self.consume("keyword", "return")
+
+        # expression? (por enquanto ignorado)
+        if not self.match("symbol", ";"):
+            self.advance()  # temporário
+
+        self.consume("symbol", ";")
+
+        self.close_tag("returnStatement")
