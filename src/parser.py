@@ -202,9 +202,8 @@ class Parser:
 
         self.consume("keyword", "return")
 
-        # expression? (por enquanto ignorado)
         if not self.match("symbol", ";"):
-            self.advance()  # temporário
+            self.compile_expression()
 
         self.consume("symbol", ";")
 
@@ -225,9 +224,7 @@ class Parser:
 
         self.consume("symbol", "=")
 
-        # expressão simplificada
-        while not self.match("symbol", ";"):
-            self.advance()
+        self.compile_expression()
 
         self.consume("symbol", ";")
 
@@ -238,9 +235,15 @@ class Parser:
 
         self.consume("keyword", "do")
 
-        # chamada de função simplificada
-        while not self.match("symbol", ";"):
-            self.advance()
+        self.consume("identifier")
+
+        if self.match("symbol", "."):
+            self.consume("symbol", ".")
+            self.consume("identifier")
+
+        self.consume("symbol", "(")
+        self.compile_expression_list()
+        self.consume("symbol", ")")
 
         self.consume("symbol", ";")
 
@@ -253,9 +256,7 @@ class Parser:
 
         self.consume("symbol", "(")
 
-        # expressão simplificada
-        while not self.match("symbol", ")"):
-            self.advance()
+        self.compile_expression()
 
         self.consume("symbol", ")")
 
@@ -273,9 +274,7 @@ class Parser:
         self.consume("keyword", "if")
         self.consume("symbol", "(")
 
-        # expressão simplificada, será substituída depois por compile_expression()
-        while not self.match("symbol", ")"):
-            self.advance()
+        self.compile_expression()
 
         self.consume("symbol", ")")
         self.consume("symbol", "{")
@@ -291,3 +290,86 @@ class Parser:
             self.consume("symbol", "}")
 
         self.close_tag("ifStatement")
+    
+    def compile_expression(self):
+        self.open_tag("expression")
+
+        self.compile_term()
+
+        while self.match("symbol") and self.current_token()[1] in ["+", "-", "*", "/", "&", "|", "<", ">", "="]:
+            self.consume("symbol")
+            self.compile_term()
+
+        self.close_tag("expression")
+
+    
+    def compile_term(self):
+        self.open_tag("term")
+
+        token = self.current_token()
+
+        if token is None:
+            raise SyntaxError("Fim inesperado de tokens")
+
+        token_type, value = token
+
+        # integerConstant
+        if token_type == "integerConstant":
+            self.consume("integerConstant")
+
+        # stringConstant
+        elif token_type == "stringConstant":
+            self.consume("stringConstant")
+
+        # keywordConstant
+        elif token_type == "keyword" and value in ["true", "false", "null", "this"]:
+            self.consume("keyword")
+
+        # identifier (var, array, subroutine)
+        elif token_type == "identifier":
+            self.consume("identifier")
+
+            if self.match("symbol", "["):
+                self.consume("symbol", "[")
+                self.compile_expression()
+                self.consume("symbol", "]")
+
+            elif self.match("symbol", "("):
+                self.consume("symbol", "(")
+                self.compile_expression_list()
+                self.consume("symbol", ")")
+
+            elif self.match("symbol", "."):
+                self.consume("symbol", ".")
+                self.consume("identifier")
+                self.consume("symbol", "(")
+                self.compile_expression_list()
+                self.consume("symbol", ")")
+
+        # (expression)
+        elif self.match("symbol", "("):
+            self.consume("symbol", "(")
+            self.compile_expression()
+            self.consume("symbol", ")")
+
+        # unaryOp term
+        elif self.match("symbol") and value in ["-", "~"]:
+            self.consume("symbol")
+            self.compile_term()
+
+        else:
+            raise SyntaxError(f"Termo inválido: {token}")
+
+        self.close_tag("term")
+
+    def compile_expression_list(self):
+        self.open_tag("expressionList")
+
+        if not self.match("symbol", ")"):
+            self.compile_expression()
+
+            while self.match("symbol", ","):
+                self.consume("symbol", ",")
+                self.compile_expression()
+
+        self.close_tag("expressionList")
