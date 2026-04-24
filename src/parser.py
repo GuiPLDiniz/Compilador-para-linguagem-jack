@@ -132,7 +132,16 @@ class Parser:
     
     def compile_parameter_list(self):
         self.open_tag("parameterList")
-        # vazio por enquanto
+
+        if not self.match("symbol", ")"):
+            self.compile_type()
+            self.consume("identifier")
+
+            while self.match("symbol", ","):
+                self.consume("symbol", ",")
+                self.compile_type()
+                self.consume("identifier")
+
         self.close_tag("parameterList")
     
     def compile_subroutine_body(self):
@@ -142,7 +151,7 @@ class Parser:
 
         # varDec* (ignorado por enquanto)
         while self.match("keyword", "var"):
-            self.advance()  # temporário
+            self.compile_var_dec()
 
         # statements (ignorado por enquanto)
         while not self.match("symbol", "}"):
@@ -151,3 +160,19 @@ class Parser:
         self.consume("symbol", "}")
 
         self.close_tag("subroutineBody")
+    
+    def compile_var_dec(self):
+        self.open_tag("varDec")
+
+        self.consume("keyword", "var")
+        self.compile_type()
+        self.consume("identifier")
+
+        while self.match("symbol", ","):
+            self.consume("symbol", ",")
+            self.consume("identifier")
+
+        self.consume("symbol", ";")
+
+        self.close_tag("varDec")
+        
