@@ -61,3 +61,26 @@ class Parser:
 
     def get_xml(self):
         return "\n".join(self.lines) + "\n"
+    
+    def compile_class(self):
+        self.open_tag("class")
+
+        self.consume("keyword", "class")
+        self.consume("identifier")  # nome da classe
+        self.consume("symbol", "{")
+
+        # classVarDec*
+        while self.match("keyword", "static") or self.match("keyword", "field"):
+            # ainda não implementado
+            self.advance()  # temporário (será substituído depois)
+
+        # subroutineDec*
+        while self.match("keyword", "constructor") or \
+            self.match("keyword", "function") or \
+            self.match("keyword", "method"):
+            # ainda não implementado
+            self.advance()  # temporário
+
+        self.consume("symbol", "}")
+
+        self.close_tag("class")
