@@ -9,12 +9,19 @@ Este repositório contém o desenvolvimento de um compilador para a linguagem **
 - Python 3
 
 ## Descrição
-Este projeto tem como objetivo a implementação de um analisador léxico (scanner) para a linguagem Jack, conforme especificações do curso nand2tetris.
+O projeto implementa:
 
-O analisador é responsável por:
-- ler arquivos `.jack`
-- identificar os tokens da linguagem
-- gerar saída em formato XML compatível com o padrão oficial
+- **Analisador Léxico (Scanner)**  
+- **Analisador Sintático (Parser)**  
+
+para a linguagem Jack, conforme especificações do curso **nand2tetris**.
+
+O compilador:
+
+- lê arquivos `.jack`
+- identifica tokens da linguagem
+- valida a estrutura sintática
+- gera saída XML compatível com o padrão oficial
 
 ## Estrutura do projeto
 O projeto está organizado de forma a separar claramente o código-fonte e os arquivos de teste, incluindo os arquivos oficiais do nand2tetris utilizados para validação.
@@ -23,35 +30,15 @@ Compilador-para-linguagem-jack/
 │
 ├── src/
 │   ├── main.py
-│   └── test_runner.py
+│   ├── tokenizer.py
+│   ├── parser.py
+│   ├── test_runner.py
+│   └── parser_test_runner.py
 │
 ├── tests/
 │   ├── ArrayTest/
-│   │   ├── Main.jack
-│   │   ├── MainT.xml
-│   │   └── MainT_oficial.xml
-│   │
 │   ├── ExpressionLessSquare/
-│   │   ├── Main.jack
-│   │   ├── Square.jack
-│   │   ├── SquareGame.jack
-│   │   ├── MainT.xml
-│   │   ├── MainT_oficial.xml
-│   │   ├── SquareT.xml
-│   │   ├── SquareT_oficial.xml
-│   │   ├── SquareGameT.xml
-│   │   └── SquareGameT_oficial.xml
-│   │
 │   └── Square/
-│       ├── Main.jack
-│       ├── Square.jack
-│       ├── SquareGame.jack
-│       ├── MainT.xml
-│       ├── MainT_oficial.xml
-│       ├── SquareT.xml
-│       ├── SquareT_oficial.xml
-│       ├── SquareGameT.xml
-│       └── SquareGameT_oficial.xml
 │
 └── README.md
 ```
@@ -64,128 +51,148 @@ Os testes foram organizados em pastas correspondentes aos conjuntos oficiais do 
 
 Cada pasta contém:
 
-- Arquivos `.jack`: código-fonte de entrada
-- Arquivos `.xml` (sem sufixo): saída gerada pelo analisador léxico
-- Arquivos `.xml` com sufixo `_oficial`: saída oficial fornecida pelo nand2tetris
+Cada pasta contém:
+
+- Arquivos `.jack`: código de entrada  
+- Arquivos `.xml`: saída gerada pelo programa  
+- Arquivos `_oficial.xml`: gabarito oficial  
+
 ### Observação importante
 
-Os arquivos com sufixo `_oficial` representam o gabarito oficial e são utilizados para validação do funcionamento do analisador léxico.
+Os arquivos com sufixo `_oficial` representam o resultado esperado.
 
-Já os arquivos `.xml` sem o sufixo `_oficial` são aqueles gerados pelo programa desenvolvido, devendo ser idênticos aos oficiais para que a implementação seja considerada correta.
-## Estado atual
-O projeto já realiza:
-- leitura de arquivos `.jack`
-- geração de saída XML
-- tokenização completa
-- classificação de palavras reservadas (`keyword`) e identificadores (`identifier`)
-- identificação de símbolos da linguagem
-- reconhecimento de: `integerConstant` e `stringConstant`
-- tratamento de comentários (`//`, `/* */`, `/** */`)
-- escape de caracteres especiais para XML (`<`, `>`, `&`, `"`)
+Os arquivos gerados pelo programa devem ser **estruturalmente idênticos** aos oficiais.
 
-## Limitações Atuais
+## Funcionamento interno
 
-- O projeto realiza apenas análise léxica, não contemplando validação sintática (parser)
+### Tokenizer (scanner)
 
-## Saída
-Para cada arquivo `.jack`, o programa gera automaticamente um arquivo `.xml` correspondente com a estrutura de tokens em formato XML.
+Responsável por:
 
-## Observações
-O projeto foi desenvolvido sem o uso de geradores automáticos de analisadores léxicos e sintáticos (Lex, Flex, Yacc), conforme exigência da disciplina.
+- remoção de comentários → `remove_comments()`
+- tokenização → `basic_tokenize()`
+- classificação de tokens → `classify_token()`
+- escape XML → `escape_xml()`
+- geração XML léxico → `tokens_to_xml()`
 
-## Organização interna do código
+### Parser (analisador sintático)
 
-Neste projeto, toda a lógica do analisador léxico foi implementada no arquivo:
-```
-src/main.py
-```
-Diferentemente de uma arquitetura modular, em que scanner, tokens e geração de saída são separados em arquivos distintos, optou-se por uma implementação centralizada para simplificar o desenvolvimento inicial.
+Implementado com **Recursive Descent Parsing**.
 
-Apesar de estar concentrado em um único arquivo, o código está organizado logicamente em etapas bem definidas, cada uma associada às seguintes funções:
+Principais métodos:
 
-- leitura do arquivo `.jack` e validação do caminho informado
-    → função responsável: `main()`
-- remoção de comentários de linha e de bloco
-    → função responsável: `remove_comments()`
-- classificação dos tokens em `keyword`, `integerConstant` e `identifier`
-    → função responsável: `classify_token()`
-- tokenização do conteúdo, com tratamento de `stringConstant`, símbolos, espaços e palavras
-    → função responsável: `basic_tokenize()`
-- escape de caracteres especiais exigidos pelo XML (`<`, `>`, `&`, ")
-    → função responsável: `escape_xml()`
-- geração da saída final no formato XML
-    → função responsável: `tokens_to_xml()`
-- gravação do arquivo XML de saída
-    → função responsável: `main()`
+- `compile_class`
+- `compile_class_var_dec`
+- `compile_subroutine_dec`
+- `compile_parameter_list`
+- `compile_subroutine_body`
+- `compile_var_dec`
+- `compile_statements`
+- `compile_let`
+- `compile_if`
+- `compile_while`
+- `compile_do`
+- `compile_return`
+- `compile_expression`
+- `compile_term`
+- `compile_expression_list`
 
-Essa organização mantém a separação conceitual das responsabilidades, ainda que fisicamente estejam no mesmo arquivo.
+## Execução do compilador
 
-
-## Instruções para utilização do analisador léxico
-O programa recebe como entrada um arquivo `.jack` e gera um arquivo `.xml` com os tokens reconhecidos.
-
-### Execução
-
-No terminal, a partir da raiz do projeto:
+### Comando:
 
 ```
 python src/main.py caminho/para/arquivo.jack
-
 ```
-### Exemplo
+
+### Exemplo:
 
 ```
 python src/main.py tests/ArrayTest/Main.jack
-
 ```
 
-### Saída
+## Saída
 
-Será gerado automaticamente um arquivo no mesmo diretório do arquivo de entrada, com o sufixo `T.xml`
-
-### Exemplo
+O parser gera arquivos com sufixo:
 
 ```
-Main.jack → MainT.xml
+P.xml
+```
+
+Exemplo:
 
 ```
-### Como validar os testes
+Main.jack → MainP.xml
+```
 
-O projeto possui um script para validar automaticamente os arquivos XML gerados, comparando-os com os arquivos oficiais do nand2tetris.
+## Validação do Parser
 
-Antes de executar o script de testes, é necessário gerar previamente os arquivos `.xml` correspondentes a partir dos arquivos `.jack`, pois o `test_runner.py` apenas realiza a comparação entre os arquivos gerados e os arquivos oficiais.
+### Executar testes:
 
-### Execução dos testes
+```
+python src/parser_test_runner.py
+```
+
+### Resultado esperado:
+
+```
+[OK] tests/ArrayTest/MainP.xml
+[OK] tests/ExpressionLessSquare/MainP.xml
+[OK] tests/Square/MainP.xml
+
+Resumo:
+  7/7 testes passaram
+  Parser validado com sucesso
+```
+## Validação do Scanner
 
 ```
 python src/test_runner.py
 ```
 
-### Resultado esperado
+## Estratégia de validação
 
-Se todos os arquivos estiverem corretos, a saída será semelhante a:
-```
-[OK] Arquivos idênticos: MainT.xml
-[OK] Arquivos idênticos: SquareT.xml
-[OK] Arquivos idênticos: SquareGameT.xml
+Foi utilizada:
 
-Resumo:
-  Testes aprovados: 7/7
-  Todos os arquivos estão idênticos aos oficiais.
-```
-Caso haja divergência, o programa indicará a linha onde ocorreu a diferença.
+- comparação automática de arquivos XML
+- normalização de indentação (remoção de espaços à esquerda)
+- validação estrutural da hierarquia de tags
 
-### Como alterar os arquivos testados
 
-Os testes executados pelo script estão definidos diretamente no arquivo:
-```
-src/test_runner.py
-```
-Dentro da função responsável pelos testes (geralmente ``run_all_tests``), existe uma lista contendo os caminhos dos arquivos comparados, por exemplo:
-```
-test_cases = [
-    ("tests/ArrayTest/MainT.xml", "tests/ArrayTest/MainT_oficial.xml"),
-]
-```
-Para adicionar, remover ou alterar testes, basta editar essa lista, incluindo os caminhos dos arquivos gerados e seus respectivos arquivos oficiais.
-A simples inclusão de arquivos na pasta `tests` não os adiciona automaticamente à execução dos testes, sendo necessária a atualização manual da lista `test_cases`.
+## Limitações
+
+- Não há geração de código VM
+- Não há análise semântica
+- O parser assume entrada válida conforme a gramática
+
+
+## Decisão técnica relevante
+
+O parser foi implementado utilizando **Recursive Descent Parsing**, com uma função para cada não-terminal da gramática Jack.
+
+Essa abordagem:
+
+- facilita manutenção
+- melhora legibilidade
+- segue o modelo teórico apresentado em aula
+
+
+## Status do projeto
+
+| Item | Status |
+|------|--------|
+| Scanner | OK |
+| Parser | OK |
+| Integração | OK |
+| Validação oficial | OK |
+| Testes automatizados | OK |
+
+## Conclusão
+
+O projeto atende integralmente aos requisitos da atividade:
+
+- implementação completa do scanner
+- implementação completa do parser
+- integração funcional entre os módulos
+- validação com arquivos oficiais
+- testes automatizados
