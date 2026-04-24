@@ -184,10 +184,16 @@ class Parser:
             self.match("keyword", "do") or
             self.match("keyword", "return")
         ):
-            if self.match("keyword", "return"):
+            if self.match("keyword", "let"):
+                self.compile_let()
+            elif self.match("keyword", "while"):
+                self.compile_while()
+            elif self.match("keyword", "do"):
+                self.compile_do()
+            elif self.match("keyword", "return"):
                 self.compile_return()
             else:
-                self.advance()  # temporário para os outros
+                self.advance()  # if ainda não implementado
 
         self.close_tag("statements")
     
@@ -203,3 +209,60 @@ class Parser:
         self.consume("symbol", ";")
 
         self.close_tag("returnStatement")
+    
+    def compile_let(self):
+        self.open_tag("letStatement")
+
+        self.consume("keyword", "let")
+        self.consume("identifier")
+
+        # array opcional: a[i]
+        if self.match("symbol", "["):
+            self.consume("symbol", "[")
+            while not self.match("symbol", "]"):
+                self.advance()  # expressão ainda não implementada
+            self.consume("symbol", "]")
+
+        self.consume("symbol", "=")
+
+        # expressão simplificada
+        while not self.match("symbol", ";"):
+            self.advance()
+
+        self.consume("symbol", ";")
+
+        self.close_tag("letStatement")
+    
+    def compile_do(self):
+        self.open_tag("doStatement")
+
+        self.consume("keyword", "do")
+
+        # chamada de função simplificada
+        while not self.match("symbol", ";"):
+            self.advance()
+
+        self.consume("symbol", ";")
+
+        self.close_tag("doStatement")
+
+    def compile_while(self):
+        self.open_tag("whileStatement")
+
+        self.consume("keyword", "while")
+
+        self.consume("symbol", "(")
+
+        # expressão simplificada
+        while not self.match("symbol", ")"):
+            self.advance()
+
+        self.consume("symbol", ")")
+
+        self.consume("symbol", "{")
+
+        self.compile_statements()
+
+        self.consume("symbol", "}")
+
+        self.close_tag("whileStatement")
