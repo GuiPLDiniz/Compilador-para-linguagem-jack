@@ -215,11 +215,10 @@ class Parser:
         self.consume("keyword", "let")
         self.consume("identifier")
 
-        # array opcional: a[i]
+        
         if self.match("symbol", "["):
             self.consume("symbol", "[")
-            while not self.match("symbol", "]"):
-                self.advance()  # expressão ainda não implementada
+            self.compile_expression()
             self.consume("symbol", "]")
 
         self.consume("symbol", "=")

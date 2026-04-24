@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 from tokenizer import remove_comments, basic_tokenize, tokens_to_xml
+from parser import Parser
 
 
 
@@ -30,9 +31,12 @@ def main():
     print("Arquivo lido com sucesso.")
 
     tokens = basic_tokenize(content)
-    xml_content = tokens_to_xml(tokens)
 
-    output_path = file_path.with_name(file_path.stem + "T.xml")
+    parser = Parser(tokens)
+    parser.compile_class()
+    xml_content = parser.get_xml()
+
+    output_path = file_path.with_name(file_path.stem + "P.xml")
 
     try:
         output_path.write_text(xml_content, encoding="utf-8")
