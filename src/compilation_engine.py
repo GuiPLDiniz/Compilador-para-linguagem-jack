@@ -72,8 +72,7 @@ class CompilationEngine:
             self.match("keyword", "function") or
             self.match("keyword", "method")
         ):
-            # subrotinas serão implementadas nos próximos commits
-            self.advance()
+            self.compile_subroutine_dec()
 
         self.consume("symbol", "}")
 
@@ -107,3 +106,74 @@ class CompilationEngine:
             return value
 
         raise SyntaxError(f"Tipo inválido: {self.current_token()}")
+    
+
+    def compile_subroutine_dec(self):
+        _, subroutine_kind = self.consume("keyword")  # constructor | function | method
+
+        self.symbol_table.start_subroutine()
+
+        if subroutine_kind == "method":
+            self.symbol_table.define("this", self.class_name, "arg")
+
+        if self.match("keyword", "void"):
+            self.consume("keyword", "void")
+        else:
+            self.compile_type()
+
+        _, subroutine_name = self.consume("identifier")
+        self.subroutine_name = subroutine_name
+
+        self.consume("symbol", "(")
+        self.compile_parameter_list()
+        self.consume("symbol", ")")
+
+        self.compile_subroutine_body(subroutine_kind)
+
+
+    def compile_parameter_list(self):
+        if self.match("symbol", ")"):
+            return
+
+        var_type = self.compile_type()
+        _, name = self.consume("identifier")
+        self.symbol_table.define(name, var_type, "arg")
+
+        while self.match("symbol", ","):
+            self.consume("symbol", ",")
+            var_type = self.compile_type()
+            _, name = self.consume("identifier")
+            self.symbol_table.define(name, var_type, "arg")
+
+
+    def compile_subroutine_body(self, subroutine_kind):
+        self.consume("symbol", "{")
+
+        while self.match("keyword", "var"):
+            self.compile_var_dec()
+
+        full_name = f"{self.class_name}.{self.subroutine_name}"
+        n_locals = self.symbol_table.var_count("var")
+
+        self.vm_writer.write_function(full_name, n_locals)
+
+        # statements serão implementados nos próximos commits
+        while not self.match("symbol", "}"):
+            self.advance()
+
+        self.consume("symbol", "}")
+
+
+    def compile_var_dec(self):
+        self.consume("keyword", "var")
+        var_type = self.compile_type()
+
+        _, name = self.consume("identifier")
+        self.symbol_table.define(name, var_type, "var")
+
+        while self.match("symbol", ","):
+            self.consume("symbol", ",")
+            _, name = self.consume("identifier")
+            self.symbol_table.define(name, var_type, "var")
+
+        self.consume("symbol", ";")
