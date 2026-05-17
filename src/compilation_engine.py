@@ -55,3 +55,55 @@ class CompilationEngine:
 
     def get_vm_code(self):
         return self.vm_writer.get_output()
+    
+    def compile_class(self):
+        self.consume("keyword", "class")
+
+        _, class_name = self.consume("identifier")
+        self.class_name = class_name
+
+        self.consume("symbol", "{")
+
+        while self.match("keyword", "static") or self.match("keyword", "field"):
+            self.compile_class_var_dec()
+
+        while (
+            self.match("keyword", "constructor") or
+            self.match("keyword", "function") or
+            self.match("keyword", "method")
+        ):
+            # subrotinas serão implementadas nos próximos commits
+            self.advance()
+
+        self.consume("symbol", "}")
+
+
+    def compile_class_var_dec(self):
+        _, kind = self.consume("keyword")  # static | field
+        var_type = self.compile_type()
+
+        _, name = self.consume("identifier")
+        self.symbol_table.define(name, var_type, kind)
+
+        while self.match("symbol", ","):
+            self.consume("symbol", ",")
+            _, name = self.consume("identifier")
+            self.symbol_table.define(name, var_type, kind)
+
+        self.consume("symbol", ";")
+
+
+    def compile_type(self):
+        if (
+            self.match("keyword", "int") or
+            self.match("keyword", "char") or
+            self.match("keyword", "boolean")
+        ):
+            _, value = self.consume("keyword")
+            return value
+
+        if self.match("identifier"):
+            _, value = self.consume("identifier")
+            return value
+
+        raise SyntaxError(f"Tipo inválido: {self.current_token()}")
