@@ -57,7 +57,7 @@ def main():
     # diretório
     elif input_path.is_dir():
 
-        jack_files = list(input_path.glob("*.jack"))
+        jack_files = list(input_path.rglob("*.jack"))
 
         if not jack_files:
             print("Nenhum arquivo .jack encontrado.")
