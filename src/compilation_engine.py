@@ -13,6 +13,9 @@ class CompilationEngine:
         self.class_name = ""
         self.subroutine_name = ""
 
+        self.while_count = 0
+        self.if_count = 0
+
     def current_token(self):
         if self.current < len(self.tokens):
             return self.tokens[self.current]
@@ -187,11 +190,15 @@ class CompilationEngine:
             if self.match("keyword", "let"):
                 self.compile_let()
 
+            elif self.match("keyword", "while"):
+                self.compile_while()
+
             elif self.match("keyword", "do"):
                 self.compile_do()
 
             elif self.match("keyword", "return"):
                 self.compile_return()
+
             else:
                 self.advance()
     
@@ -354,3 +361,33 @@ class CompilationEngine:
             count += 1
 
         return count
+    
+
+    def compile_while(self):
+        count = self.while_count
+        self.while_count += 1
+
+        exp_label = f"WHILE_EXP{count}"
+        end_label = f"WHILE_END{count}"
+
+        self.vm_writer.write_label(exp_label)
+
+        self.consume("keyword", "while")
+        self.consume("symbol", "(")
+
+        self.compile_expression()
+
+        self.consume("symbol", ")")
+
+        # se a condição for falsa, sai do while
+        self.vm_writer.write_arithmetic("not")
+        self.vm_writer.write_if(end_label)
+
+        self.consume("symbol", "{")
+
+        self.compile_statements()
+
+        self.consume("symbol", "}")
+
+        self.vm_writer.write_goto(exp_label)
+        self.vm_writer.write_label(end_label)

@@ -4,7 +4,11 @@ from compilation_engine import CompilationEngine
 content = """
 class Main {
     function void main() {
-        do Output.printInt(2 + 3);
+        var int x;
+        let x = 0;
+        while (x < 3) {
+            let x = x + 1;
+        }
         return;
     }
 }
