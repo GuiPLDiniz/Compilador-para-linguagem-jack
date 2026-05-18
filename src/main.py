@@ -2,7 +2,8 @@ import sys
 from pathlib import Path
 
 from tokenizer import remove_comments, basic_tokenize
-from parser import Parser
+
+from compilation_engine import CompilationEngine
 
 
 def compile_file(file_path):
@@ -16,18 +17,18 @@ def compile_file(file_path):
 
     tokens = basic_tokenize(content)
 
-    parser = Parser(tokens)
-    parser.compile_class()
+    engine = CompilationEngine(tokens)
+    engine.compile_class()
 
-    xml_content = parser.get_xml()
+    vm_content = engine.get_vm_code()
 
-    output_path = file_path.with_name(file_path.stem + "P.xml")
+    output_path = file_path.with_suffix(".vm")
 
     try:
-        output_path.write_text(xml_content, encoding="utf-8")
+        output_path.write_text(vm_content, encoding="utf-8")
 
     except Exception as e:
-        print(f"Erro ao escrever XML: {e}")
+        print(f"Erro ao escrever VM: {e}")
         return
 
     print(f"[OK] Gerado: {output_path}")
