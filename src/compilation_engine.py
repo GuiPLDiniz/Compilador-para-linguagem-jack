@@ -157,9 +157,7 @@ class CompilationEngine:
 
         self.vm_writer.write_function(full_name, n_locals)
 
-        # statements serão implementados nos próximos commits
-        while not self.match("symbol", "}"):
-            self.advance()
+        self.compile_statements()
 
         self.consume("symbol", "}")
 
@@ -177,3 +175,83 @@ class CompilationEngine:
             self.symbol_table.define(name, var_type, "var")
 
         self.consume("symbol", ";")
+
+    def compile_statements(self):
+        while (
+            self.match("keyword", "let") or
+            self.match("keyword", "if") or
+            self.match("keyword", "while") or
+            self.match("keyword", "do") or
+            self.match("keyword", "return")
+        ):
+            if self.match("keyword", "return"):
+                self.compile_return()
+            else:
+                # demais comandos serão implementados nos próximos commits
+                self.advance()
+    
+    def compile_return(self):
+        self.consume("keyword", "return")
+
+        if not self.match("symbol", ";"):
+            self.compile_expression()
+        else:
+            # return void
+            self.vm_writer.write_push("constant", 0)
+
+        self.consume("symbol", ";")
+        self.vm_writer.write_return()
+
+
+    def compile_expression(self):
+        self.compile_term()
+
+        while self.match("symbol") and self.current_token()[1] in ["+", "-"]:
+            _, op = self.consume("symbol")
+            self.compile_term()
+
+            if op == "+":
+                self.vm_writer.write_arithmetic("add")
+            elif op == "-":
+                self.vm_writer.write_arithmetic("sub")
+    
+    def compile_term(self):
+        token = self.current_token()
+
+        if token is None:
+            raise SyntaxError("Fim inesperado de tokens")
+
+        token_type, value = token
+
+        if token_type == "integerConstant":
+            self.consume("integerConstant")
+            self.vm_writer.write_push("constant", value)
+
+        elif token_type == "identifier":
+            _, name = self.consume("identifier")
+            self.write_push_identifier(name)
+
+        else:
+            raise SyntaxError(f"Termo ainda não suportado no gerador VM: {token}")
+    
+    def write_push_identifier(self, name):
+        kind = self.symbol_table.kind_of(name)
+        index = self.symbol_table.index_of(name)
+
+        if kind is None:
+            raise NameError(f"Identificador não encontrado na tabela de símbolos: {name}")
+
+        segment = self.kind_to_segment(kind)
+        self.vm_writer.write_push(segment, index)
+
+    def kind_to_segment(self, kind):
+        if kind == "static":
+            return "static"
+        if kind == "field":
+            return "this"
+        if kind == "arg":
+            return "argument"
+        if kind == "var":
+            return "local"
+
+        raise ValueError(f"Kind inválido: {kind}")
