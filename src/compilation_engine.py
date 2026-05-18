@@ -186,6 +186,10 @@ class CompilationEngine:
         ):
             if self.match("keyword", "let"):
                 self.compile_let()
+
+            elif self.match("keyword", "do"):
+                self.compile_do()
+
             elif self.match("keyword", "return"):
                 self.compile_return()
             else:
@@ -303,3 +307,50 @@ class CompilationEngine:
             self.vm_writer.write_arithmetic("eq")
         else:
             raise ValueError(f"Operador inválido: {op}")
+    
+
+
+    def compile_do(self):
+        self.consume("keyword", "do")
+
+        self.compile_subroutine_call()
+
+        self.consume("symbol", ";")
+
+        # descarta valor retornado
+        self.vm_writer.write_pop("temp", 0)
+
+
+    def compile_subroutine_call(self):
+        _, first_name = self.consume("identifier")
+
+        self.consume("symbol", ".")
+
+        _, second_name = self.consume("identifier")
+
+        full_name = f"{first_name}.{second_name}"
+
+        self.consume("symbol", "(")
+
+        n_args = self.compile_expression_list()
+
+        self.consume("symbol", ")")
+
+        self.vm_writer.write_call(full_name, n_args)
+
+    
+    def compile_expression_list(self):
+        count = 0
+
+        if self.match("symbol", ")"):
+            return count
+
+        self.compile_expression()
+        count += 1
+
+        while self.match("symbol", ","):
+            self.consume("symbol", ",")
+            self.compile_expression()
+            count += 1
+
+        return count
