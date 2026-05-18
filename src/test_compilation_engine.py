@@ -2,13 +2,10 @@ from tokenizer import remove_comments, basic_tokenize
 from compilation_engine import CompilationEngine
 
 content = """
-class Square {
-    method void test() {
-        do move();
-        return;
-    }
-
-    method void move() {
+class Main {
+    function void main() {
+        var Array a;
+        let a[1] = 10;
         return;
     }
 }

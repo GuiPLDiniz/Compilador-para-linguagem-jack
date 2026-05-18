@@ -285,8 +285,18 @@ class CompilationEngine:
             _, name = self.consume("identifier")
 
             if self.match("symbol", "["):
-                raise NotImplementedError("Acesso a array ainda não implementado")
+                self.write_push_identifier(name)
 
+                self.consume("symbol", "[")
+
+                self.compile_expression()
+
+                self.consume("symbol", "]")
+
+                self.vm_writer.write_arithmetic("add")
+                self.vm_writer.write_pop("pointer", 1)
+                self.vm_writer.write_push("that", 0)
+                
             elif self.match("symbol", "(") or self.match("symbol", "."):
                 # voltamos uma posição para reutilizar compile_subroutine_call()
                 self.current -= 1
@@ -336,8 +346,21 @@ class CompilationEngine:
 
         _, name = self.consume("identifier")
 
+        is_array = False
+
+        # let a[i] = ...
         if self.match("symbol", "["):
-            raise NotImplementedError("Atribuição em array ainda não implementada")
+            is_array = True
+
+            self.write_push_identifier(name)
+
+            self.consume("symbol", "[")
+
+            self.compile_expression()
+
+            self.consume("symbol", "]")
+
+            self.vm_writer.write_arithmetic("add")
 
         self.consume("symbol", "=")
 
@@ -345,7 +368,15 @@ class CompilationEngine:
 
         self.consume("symbol", ";")
 
-        self.write_pop_identifier(name)
+        # array assignment
+        if is_array:
+            self.vm_writer.write_pop("temp", 0)
+            self.vm_writer.write_pop("pointer", 1)
+            self.vm_writer.write_push("temp", 0)
+            self.vm_writer.write_pop("that", 0)
+
+        else:
+            self.write_pop_identifier(name)
 
     def write_operator(self, op):
         if op == "+":
