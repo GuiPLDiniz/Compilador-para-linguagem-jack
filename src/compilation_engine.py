@@ -184,10 +184,11 @@ class CompilationEngine:
             self.match("keyword", "do") or
             self.match("keyword", "return")
         ):
-            if self.match("keyword", "return"):
+            if self.match("keyword", "let"):
+                self.compile_let()
+            elif self.match("keyword", "return"):
                 self.compile_return()
             else:
-                # demais comandos serão implementados nos próximos commits
                 self.advance()
     
     def compile_return(self):
@@ -243,6 +244,16 @@ class CompilationEngine:
 
         segment = self.kind_to_segment(kind)
         self.vm_writer.write_push(segment, index)
+    
+    def write_pop_identifier(self, name):
+        kind = self.symbol_table.kind_of(name)
+        index = self.symbol_table.index_of(name)
+
+        if kind is None:
+            raise NameError(f"Identificador não encontrado na tabela de símbolos: {name}")
+
+        segment = self.kind_to_segment(kind)
+        self.vm_writer.write_pop(segment, index)
 
     def kind_to_segment(self, kind):
         if kind == "static":
@@ -255,3 +266,20 @@ class CompilationEngine:
             return "local"
 
         raise ValueError(f"Kind inválido: {kind}")
+    
+
+    def compile_let(self):
+        self.consume("keyword", "let")
+
+        _, name = self.consume("identifier")
+
+        if self.match("symbol", "["):
+            raise NotImplementedError("Atribuição em array ainda não implementada")
+
+        self.consume("symbol", "=")
+
+        self.compile_expression()
+
+        self.consume("symbol", ";")
+
+        self.write_pop_identifier(name)
