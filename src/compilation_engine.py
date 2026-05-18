@@ -287,22 +287,10 @@ class CompilationEngine:
             if self.match("symbol", "["):
                 raise NotImplementedError("Acesso a array ainda não implementado")
 
-            elif self.match("symbol", "("):
-                raise NotImplementedError("Chamada de subrotina sem classe ainda não implementada")
-
-            elif self.match("symbol", "."):
-                # reposiciona: já consumimos o primeiro identificador
-                # aqui vamos tratar chamada Classe.funcao(...)
-                self.consume("symbol", ".")
-                _, second_name = self.consume("identifier")
-
-                full_name = f"{name}.{second_name}"
-
-                self.consume("symbol", "(")
-                n_args = self.compile_expression_list()
-                self.consume("symbol", ")")
-
-                self.vm_writer.write_call(full_name, n_args)
+            elif self.match("symbol", "(") or self.match("symbol", "."):
+                # voltamos uma posição para reutilizar compile_subroutine_call()
+                self.current -= 1
+                self.compile_subroutine_call()
 
             else:
                 self.write_push_identifier(name)
@@ -396,16 +384,37 @@ class CompilationEngine:
 
     def compile_subroutine_call(self):
         _, first_name = self.consume("identifier")
+        n_args = 0
 
-        self.consume("symbol", ".")
+        if self.match("symbol", "."):
+            self.consume("symbol", ".")
+            _, second_name = self.consume("identifier")
 
-        _, second_name = self.consume("identifier")
+            kind = self.symbol_table.kind_of(first_name)
 
-        full_name = f"{first_name}.{second_name}"
+            if kind is not None:
+                # chamada de método em objeto: obj.metodo()
+                var_type = self.symbol_table.type_of(first_name)
+                segment = self.kind_to_segment(kind)
+                index = self.symbol_table.index_of(first_name)
+
+                self.vm_writer.write_push(segment, index)
+                n_args += 1
+
+                full_name = f"{var_type}.{second_name}"
+            else:
+                # chamada de função/constructor por nome de classe: Classe.funcao()
+                full_name = f"{first_name}.{second_name}"
+
+        else:
+            # chamada de método da própria classe: metodo()
+            self.vm_writer.write_push("pointer", 0)
+            n_args += 1
+            full_name = f"{self.class_name}.{first_name}"
 
         self.consume("symbol", "(")
 
-        n_args = self.compile_expression_list()
+        n_args += self.compile_expression_list()
 
         self.consume("symbol", ")")
 

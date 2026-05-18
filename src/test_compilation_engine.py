@@ -3,9 +3,12 @@ from compilation_engine import CompilationEngine
 
 content = """
 class Square {
-    field int x;
+    method void test() {
+        do move();
+        return;
+    }
 
-    method void setX() {
+    method void move() {
         return;
     }
 }
