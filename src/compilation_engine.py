@@ -160,6 +160,19 @@ class CompilationEngine:
 
         self.vm_writer.write_function(full_name, n_locals)
 
+        # constructor
+        if subroutine_kind == "constructor":
+            field_count = self.symbol_table.var_count("field")
+
+            self.vm_writer.write_push("constant", field_count)
+            self.vm_writer.write_call("Memory.alloc", 1)
+            self.vm_writer.write_pop("pointer", 0)
+
+        # method
+        elif subroutine_kind == "method":
+            self.vm_writer.write_push("argument", 0)
+            self.vm_writer.write_pop("pointer", 0)
+
         self.compile_statements()
 
         self.consume("symbol", "}")

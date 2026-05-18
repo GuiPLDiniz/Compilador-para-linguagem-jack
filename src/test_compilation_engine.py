@@ -2,11 +2,10 @@ from tokenizer import remove_comments, basic_tokenize
 from compilation_engine import CompilationEngine
 
 content = """
-class Main {
-    function void main() {
-        var boolean x;
-        let x = true;
-        let x = ~x;
+class Square {
+    field int x;
+
+    method void setX() {
         return;
     }
 }
