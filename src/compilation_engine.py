@@ -189,6 +189,9 @@ class CompilationEngine:
         ):
             if self.match("keyword", "let"):
                 self.compile_let()
+            
+            elif self.match("keyword", "if"):
+                self.compile_if()
 
             elif self.match("keyword", "while"):
                 self.compile_while()
@@ -391,3 +394,40 @@ class CompilationEngine:
 
         self.vm_writer.write_goto(exp_label)
         self.vm_writer.write_label(end_label)
+
+    def compile_if(self):
+        count = self.if_count
+        self.if_count += 1
+
+        true_label = f"IF_TRUE{count}"
+        false_label = f"IF_FALSE{count}"
+        end_label = f"IF_END{count}"
+
+        self.consume("keyword", "if")
+        self.consume("symbol", "(")
+
+        self.compile_expression()
+
+        self.consume("symbol", ")")
+
+        self.vm_writer.write_if(true_label)
+        self.vm_writer.write_goto(false_label)
+        self.vm_writer.write_label(true_label)
+
+        self.consume("symbol", "{")
+        self.compile_statements()
+        self.consume("symbol", "}")
+
+        if self.match("keyword", "else"):
+            self.vm_writer.write_goto(end_label)
+            self.vm_writer.write_label(false_label)
+
+            self.consume("keyword", "else")
+            self.consume("symbol", "{")
+            self.compile_statements()
+            self.consume("symbol", "}")
+
+            self.vm_writer.write_label(end_label)
+
+        else:
+            self.vm_writer.write_label(false_label)

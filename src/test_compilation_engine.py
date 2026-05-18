@@ -5,9 +5,11 @@ content = """
 class Main {
     function void main() {
         var int x;
-        let x = 0;
-        while (x < 3) {
+        let x = 1;
+        if (x < 10) {
             let x = x + 1;
+        } else {
+            let x = x - 1;
         }
         return;
     }
