@@ -236,16 +236,66 @@ class CompilationEngine:
 
         token_type, value = token
 
+        # integerConstant
         if token_type == "integerConstant":
             self.consume("integerConstant")
             self.vm_writer.write_push("constant", value)
 
+        # stringConstant
+        elif token_type == "stringConstant":
+            self.consume("stringConstant")
+            self.write_string_constant(value)
+
+        # keywordConstant: true, false, null, this
+        elif token_type == "keyword" and value in ["true", "false", "null", "this"]:
+            self.consume("keyword")
+            self.write_keyword_constant(value)
+
+        # unaryOp term
+        elif token_type == "symbol" and value in ["-", "~"]:
+            _, op = self.consume("symbol")
+            self.compile_term()
+
+            if op == "-":
+                self.vm_writer.write_arithmetic("neg")
+            elif op == "~":
+                self.vm_writer.write_arithmetic("not")
+
+        # (expression)
+        elif token_type == "symbol" and value == "(":
+            self.consume("symbol", "(")
+            self.compile_expression()
+            self.consume("symbol", ")")
+
+        # identifier
         elif token_type == "identifier":
             _, name = self.consume("identifier")
-            self.write_push_identifier(name)
+
+            if self.match("symbol", "["):
+                raise NotImplementedError("Acesso a array ainda não implementado")
+
+            elif self.match("symbol", "("):
+                raise NotImplementedError("Chamada de subrotina sem classe ainda não implementada")
+
+            elif self.match("symbol", "."):
+                # reposiciona: já consumimos o primeiro identificador
+                # aqui vamos tratar chamada Classe.funcao(...)
+                self.consume("symbol", ".")
+                _, second_name = self.consume("identifier")
+
+                full_name = f"{name}.{second_name}"
+
+                self.consume("symbol", "(")
+                n_args = self.compile_expression_list()
+                self.consume("symbol", ")")
+
+                self.vm_writer.write_call(full_name, n_args)
+
+            else:
+                self.write_push_identifier(name)
 
         else:
-            raise SyntaxError(f"Termo ainda não suportado no gerador VM: {token}")
+            raise SyntaxError(f"Termo não suportado: {token}")
     
     def write_push_identifier(self, name):
         kind = self.symbol_table.kind_of(name)
@@ -431,3 +481,26 @@ class CompilationEngine:
 
         else:
             self.vm_writer.write_label(false_label)
+
+    
+    def write_string_constant(self, value):
+        self.vm_writer.write_push("constant", len(value))
+        self.vm_writer.write_call("String.new", 1)
+
+        for char in value:
+            self.vm_writer.write_push("constant", ord(char))
+            self.vm_writer.write_call("String.appendChar", 2)
+    
+    def write_keyword_constant(self, value):
+        if value == "true":
+            self.vm_writer.write_push("constant", 0)
+            self.vm_writer.write_arithmetic("not")
+
+        elif value == "false" or value == "null":
+            self.vm_writer.write_push("constant", 0)
+
+        elif value == "this":
+            self.vm_writer.write_push("pointer", 0)
+
+        else:
+            raise ValueError(f"Keyword constant inválida: {value}")
