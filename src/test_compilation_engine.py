@@ -4,9 +4,8 @@ from compilation_engine import CompilationEngine
 content = """
 class Main {
     function void main() {
-        var int x, y;
-        let x = 10;
-        let y = x + 2;
+        var int x;
+        let x = 1 < 2;
         return;
     }
 }

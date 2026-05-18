@@ -207,14 +207,12 @@ class CompilationEngine:
     def compile_expression(self):
         self.compile_term()
 
-        while self.match("symbol") and self.current_token()[1] in ["+", "-"]:
+        while self.match("symbol") and self.current_token()[1] in [
+            "+", "-", "*", "/", "&", "|", "<", ">", "="
+        ]:
             _, op = self.consume("symbol")
             self.compile_term()
-
-            if op == "+":
-                self.vm_writer.write_arithmetic("add")
-            elif op == "-":
-                self.vm_writer.write_arithmetic("sub")
+            self.write_operator(op)
     
     def compile_term(self):
         token = self.current_token()
@@ -283,3 +281,25 @@ class CompilationEngine:
         self.consume("symbol", ";")
 
         self.write_pop_identifier(name)
+
+    def write_operator(self, op):
+        if op == "+":
+            self.vm_writer.write_arithmetic("add")
+        elif op == "-":
+            self.vm_writer.write_arithmetic("sub")
+        elif op == "*":
+            self.vm_writer.write_call("Math.multiply", 2)
+        elif op == "/":
+            self.vm_writer.write_call("Math.divide", 2)
+        elif op == "&":
+            self.vm_writer.write_arithmetic("and")
+        elif op == "|":
+            self.vm_writer.write_arithmetic("or")
+        elif op == "<":
+            self.vm_writer.write_arithmetic("lt")
+        elif op == ">":
+            self.vm_writer.write_arithmetic("gt")
+        elif op == "=":
+            self.vm_writer.write_arithmetic("eq")
+        else:
+            raise ValueError(f"Operador inválido: {op}")
