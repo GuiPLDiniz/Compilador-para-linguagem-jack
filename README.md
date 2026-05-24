@@ -2,30 +2,43 @@
 
 Este repositório contém o desenvolvimento de um compilador para a linguagem **Jack**, como parte da disciplina de Compiladores do curso de Engenharia da Computação.
 
+O projeto foi desenvolvido seguindo a arquitetura proposta pelo curso **nand2tetris**, evoluindo progressivamente pelas etapas de:
+
+- Análise Léxica (Scanner)
+- Análise Sintática (Parser)
+- Geração de Código Intermediário (VM)
+
 ## Integrantes
+
 - Guilherme Pessoa Lima Diniz
 - Matrícula: 20260001310
 
 ## Linguagem utilizada
+
 - Python 3
 
 ## Descrição
-O projeto implementa:
 
-- **Analisador Léxico (Scanner)**  
-- **Analisador Sintático (Parser)**  
+O compilador implementa:
 
-para a linguagem Jack, conforme especificações do curso **nand2tetris**.
+- **Scanner (Analisador Léxico)**
+- **Parser (Analisador Sintático)**
+- **Gerador de Código VM (Compilation Engine)**
+- **Tabela de Símbolos (Symbol Table)**
+- **Escritor de Código VM (VMWriter)**
 
-O compilador:
+O compilador é capaz de:
 
-- lê arquivos `.jack`
-- identifica tokens da linguagem
-- valida a estrutura sintática
-- gera saída XML compatível com o padrão oficial
+- ler arquivos `.jack`
+- ler diretórios contendo múltiplos arquivos `.jack`
+- realizar compilação em lote
+- identificar tokens da linguagem Jack
+- validar a estrutura sintática
+- gerar código intermediário `.vm`
+- gerar arquivos compatíveis com o **VM Emulator oficial do nand2tetris**
 
 ## Estrutura do projeto
-O projeto está organizado de forma a separar claramente o código-fonte e os arquivos de teste, incluindo os arquivos oficiais do nand2tetris utilizados para validação.
+
 ```
 Compilador-para-linguagem-jack/
 │
@@ -33,39 +46,32 @@ Compilador-para-linguagem-jack/
 │   ├── main.py
 │   ├── tokenizer.py
 │   ├── parser.py
+│   ├── compilation_engine.py
+│   ├── symbol_table.py
+│   ├── vm_writer.py
 │   ├── test_runner.py
-│   └── parser_test_runner.py
+│   ├── parser_test_runner.py
+│   ├── vm_test_runner.py
 │
 ├── tests/
 │   ├── ArrayTest/
 │   ├── ExpressionLessSquare/
-│   └── Square/
+│   ├── Square/
+│   │
+│   └── Project11/
+│       ├── Seven/
+│       ├── Average/
+│       ├── ConvertToBin/
+│       ├── ComplexArrays/
+│       ├── Square/
+│       └── Pong/
 │
 └── README.md
 ```
-### Organização dos testes
-Os testes foram organizados em pastas correspondentes aos conjuntos oficiais do Projeto 10 do nand2tetris:
-
-- `ArrayTest`
-- `ExpressionLessSquare`
-- `Square`
-
-
-Cada pasta contém:
-
-- Arquivos `.jack`: código de entrada  
-- Arquivos `.xml`: saída gerada pelo programa  
-- Arquivos `_oficial.xml`: gabarito oficial  
-
-### Observação importante
-
-Os arquivos com sufixo `_oficial` representam o resultado esperado.
-
-Os arquivos gerados pelo programa devem ser **estruturalmente idênticos** aos oficiais.
 
 ## Funcionamento interno
 
-### Tokenizer (scanner)
+### Tokenizer (Scanner)
 
 Responsável por:
 
@@ -75,9 +81,11 @@ Responsável por:
 - escape XML → `escape_xml()`
 - geração XML léxico → `tokens_to_xml()`
 
-### Parser (analisador sintático)
+### Parser
 
-Implementado com **Recursive Descent Parsing**.
+Implementado utilizando:
+
+**Recursive Descent Parsing**
 
 Principais métodos:
 
@@ -97,114 +105,307 @@ Principais métodos:
 - `compile_term`
 - `compile_expression_list`
 
+### Compilation Engine
+
+Responsável pela geração do código intermediário VM.
+
+Construções suportadas:
+
+- variáveis locais
+- argumentos
+- campos (`field`)
+- variáveis estáticas (`static`)
+- expressões aritméticas
+- expressões relacionais
+- operadores unários
+- strings
+- arrays
+- chamadas de função
+- chamadas de método
+- construtores
+- `this`
+- `true`
+- `false`
+- `null`
+- `if`
+- `while`
+- `let`
+- `do`
+- `return`
+
+### Symbol Table
+
+Responsável pelo gerenciamento de:
+
+- escopo de classe
+- escopo de subrotina
+- índices de variáveis
+- resolução de identificadores
+
+Tipos suportados:
+
+- `static`
+- `field`
+- `arg`
+- `var`
+
+### VM Writer
+
+Responsável pela emissão de comandos VM:
+
+Exemplos:
+
+```
+push constant 5
+pop local 0
+add
+call Math.multiply 2
+return
+```
+
 ## Execução do compilador
 
-### Comando:
+### Compilar arquivo único
 
 ```
-python src/main.py caminho/para/arquivo.jack
-```
-
-### Exemplo:
-
-```
-python src/main.py tests/ArrayTest/Main.jack
-```
-
-## Saída
-
-O parser gera arquivos com sufixo:
-
-```
-P.xml
+python src/main.py caminho/arquivo.jack
 ```
 
 Exemplo:
 
 ```
-Main.jack → MainP.xml
+python src/main.py tests/Project11/Seven/Main.jack
 ```
 
-## Validação do Parser
-
-### Executar testes:
+### Compilar diretório inteiro
 
 ```
-python src/parser_test_runner.py
+python src/main.py caminho/diretorio
 ```
 
-### Resultado esperado:
+Exemplo:
 
 ```
-[OK] tests/ArrayTest/MainP.xml
-[OK] tests/ExpressionLessSquare/MainP.xml
-[OK] tests/Square/MainP.xml
-
-Resumo:
-  7/7 testes passaram
-  Parser validado com sucesso
+python src/main.py tests/Project11/Pong
 ```
+
+O compilador localiza automaticamente todos os arquivos `.jack`, inclusive em subdiretórios.
+
+## Saída gerada
+
+Para cada arquivo:
+
+```
+Main.jack
+```
+
+é gerado:
+
+```
+Main.vm
+```
+
+Exemplo:
+
+```
+Square.jack → Square.vm
+```
+
 ## Validação do Scanner
 
 ```
 python src/test_runner.py
 ```
 
+## Validação do Parser
+
+```
+python src/parser_test_runner.py
+```
+
+## Validação do Gerador VM
+
+```
+python src/vm_test_runner.py
+```
+
 ## Estratégia de validação
 
-Foi utilizada:
+Foram utilizados:
 
-- comparação automática de arquivos XML
-- normalização de indentação (remoção de espaços à esquerda)
-- validação estrutural da hierarquia de tags
+- testes automatizados
+- comparação estrutural XML
+- compilação automática de diretórios
+- execução no VM Emulator oficial
+- validação incremental do Project 11
 
+## Programas validados (Project 11)
 
-## Limitações
+### Seven
 
-- Não há geração de código VM
-- Não há análise semântica
-- O parser assume entrada válida conforme a gramática
+Validação:
 
+- expressões aritméticas
+- operações básicas
+- retorno
+
+Status:
+
+OK
+
+---
+
+### Average
+
+Validação:
+
+- arrays
+- laços
+- entrada e saída
+- acumulação
+
+Status:
+
+OK
+
+---
+
+### ConvertToBin
+
+Validação:
+
+- operações bit a bit
+- memória RAM
+- manipulação binária
+
+Status:
+
+OK
+
+---
+
+### ComplexArrays
+
+Validação:
+
+- arrays complexos
+- ponteiros
+- referências
+- expressões aninhadas
+
+Status:
+
+OK
+
+---
+
+### Square
+
+Validação:
+
+- objetos
+- métodos
+- construtores
+- interação gráfica
+- teclado
+
+Status:
+
+OK
+
+---
+
+### Pong
+
+Validação:
+
+- múltiplas classes
+- objetos
+- colisões
+- interação gráfica
+- execução completa
+
+Status:
+
+OK
 
 ## Decisão técnica relevante
 
-O parser foi implementado utilizando **Recursive Descent Parsing**, com uma função para cada não-terminal da gramática Jack.
+O projeto utiliza **Recursive Descent Parsing**.
+
+A estratégia implementada consiste em:
+
+- uma função para cada não-terminal da gramática Jack
+- consumo progressivo de tokens
+- reutilização da estrutura do parser sintático para a geração VM
+
+Arquitetura final:
+
+```
+Jack
+ ↓
+Tokenizer
+ ↓
+Compilation Engine
+ ↓
+Symbol Table
+ ↓
+VM Writer
+ ↓
+Código VM
+ ↓
+VM Emulator
+```
 
 Essa abordagem:
 
-- facilita manutenção
 - melhora legibilidade
-- segue o modelo teórico apresentado em aula
+- facilita manutenção
+- reduz acoplamento
+- favorece testes incrementais
 
+## Relato da atividade
+
+Principais desafios enfrentados:
+
+- implementação da gramática Jack
+- integração entre scanner, parser e geração VM
+- gerenciamento de escopo de variáveis
+- implementação de arrays
+- implementação de chamadas de método
+- tratamento correto de `this`
+- geração de rótulos únicos
+- manipulação de memória
+- validação incremental no VM Emulator
+
+A utilização de testes automatizados e dos programas oficiais do Project 11 foi fundamental para garantir a robustez da implementação.
 
 ## Status do projeto
 
 | Item | Status |
-|------|--------|
+|-------|--------|
 | Scanner | OK |
 | Parser | OK |
-| Integração | OK |
-| Validação oficial | OK |
+| Symbol Table | OK |
+| VM Writer | OK |
+| Compilation Engine | OK |
+| Compilação por diretório | OK |
+| Geração VM | OK |
 | Testes automatizados | OK |
-
-## Relato da atividade
-
-Durante o desenvolvimento, os principais desafios foram:
-
-- compreender e implementar corretamente a gramática da linguagem Jack
-- estruturar o parser utilizando recursive descent parsing
-- tratar corretamente expressões e chamadas de subrotinas
-- garantir que a saída XML estivesse exatamente no formato esperado
-- lidar com diferenças de indentação na comparação dos arquivos
-
-A utilização de testes automatizados com normalização de XML foi fundamental para validar o funcionamento do parser e evitar erros sutis na estrutura da saída.
+| Project 11 | OK |
 
 ## Conclusão
 
-O projeto atende integralmente aos requisitos da atividade:
+O projeto atende integralmente aos requisitos propostos:
 
 - implementação completa do scanner
 - implementação completa do parser
+- implementação do gerador de código intermediário VM
+- compilação de arquivos individuais
+- compilação em lote de diretórios
 - integração funcional entre os módulos
-- validação com arquivos oficiais
+- validação utilizando os programas oficiais do nand2tetris
 - testes automatizados
+- compatibilidade com o VM Emulator oficial
+
+O compilador desenvolvido realiza corretamente a tradução da linguagem Jack para código VM, concluindo a implementação proposta para a disciplina.
